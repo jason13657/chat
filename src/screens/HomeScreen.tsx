@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamlist, UserData } from "../types";
 import { useEffect, useState } from "react";
 import { StyledPressable, StyledSafeAreaView, StyledText, StyledView } from "../styled";
-import { ActivityIndicator, FlatList, InteractionManager, Modal, Pressable, View } from "react-native";
+import { ActivityIndicator, FlatList, InteractionManager, Modal, Platform, Pressable, StatusBar, View } from "react-native";
 import SetNickname from "../modals/SetNickname";
 import { User } from "firebase/auth";
 import { auth } from "../firebase/firebase";
@@ -112,8 +112,11 @@ export default function HomeScreen({ route, navigation }: NativeStackScreenProps
   };
 
   return (
-    <StyledSafeAreaView className="flex-1 items-center justify-center">
-      <StyledView className="inline-flex w-screen items-center justify-center">
+    <StyledSafeAreaView
+      className="flex-1 items-center justify-center"
+      style={{ paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }}
+    >
+      <StyledView className="inline-flex w-screen items-center justify-center mt-3">
         <StyledText className="text-2xl relative ">Chat-{nickname}</StyledText>
         <StyledPressable
           onPress={() => {

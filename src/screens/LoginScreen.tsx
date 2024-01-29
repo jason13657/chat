@@ -1,5 +1,5 @@
 import { styled } from "nativewind";
-import { View, Text, Pressable, TextInput, Modal, ActivityIndicator } from "react-native";
+import { View, Text, Pressable, TextInput, Modal, ActivityIndicator, Platform, StatusBar } from "react-native";
 import { RootStackParamlist } from "../types";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
@@ -33,7 +33,10 @@ export default function LoginScreen({ navigation }: NativeStackScreenProps<RootS
   };
 
   return (
-    <StyledView className="flex-1 items-center justify-center">
+    <StyledView
+      className="flex-1 items-center justify-center"
+      style={{ paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }}
+    >
       <StyledView className=" items-center w-screen">
         <StyledText className="mb-2  w-2/3 px-3">email</StyledText>
         <StyledTextInput

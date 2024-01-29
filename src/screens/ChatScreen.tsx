@@ -1,22 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Chat, Chats, RootStackParamlist, UserData } from "../types";
+import { Chat, Chats, RootStackParamlist } from "../types";
 import { StyledPressable, StyledSafeAreaView, StyledText, StyledTextInput, StyledView } from "../styled";
 import { useEffect, useState } from "react";
-import { FlatList, KeyboardAvoidingView, Platform } from "react-native";
+import { FlatList, KeyboardAvoidingView, Platform, StatusBar } from "react-native";
 import uuid from "react-native-uuid";
 import { addChat, onObserveChat } from "../firebase/realtime";
-
-const me: UserData = {
-  name: "Jason",
-  uid: "fjwepfjewopfjpwffwef",
-};
-const friend: UserData = {
-  name: "Chriss",
-  uid: "fewfnjwefnjweofgnwo",
-};
-
-const date1 = new Date(2024, 0, 30, 12, 12);
-const date2 = new Date(2024, 0, 30, 12, 15);
 
 export default function ChatScreen({ route, navigation }: NativeStackScreenProps<RootStackParamlist, "Chat">) {
   const [text, setText] = useState<string>("");
@@ -24,6 +12,11 @@ export default function ChatScreen({ route, navigation }: NativeStackScreenProps
 
   useEffect(() => {
     onObserveChat(route.params.id, (chats) => {
+      if (!chats) {
+        console.log(chats);
+
+        return;
+      }
       const _data: Chat[] = [];
       Object.keys(chats).forEach((_key) => {
         _data.push(chats[_key]);
@@ -34,12 +27,23 @@ export default function ChatScreen({ route, navigation }: NativeStackScreenProps
 
   const renderChat = (chat: Chat) => {
     return (
-      <StyledView className="flex-row p-1 m-1 items-center">
-        <StyledView>
-          <StyledText>{chat.who.name} : </StyledText>
-        </StyledView>
-        <StyledText className="text-xl">{chat.content}</StyledText>
-      </StyledView>
+      <>
+        {chat.who.uid === route.params.me.uid ? (
+          <StyledView className="flex-row p-1 m-1 items-center justify-end">
+            <StyledView>
+              <StyledText>me : </StyledText>
+            </StyledView>
+            <StyledText className="text-xl">{chat.content}</StyledText>
+          </StyledView>
+        ) : (
+          <StyledView className="flex-row p-1 m-1 items-center">
+            <StyledView>
+              <StyledText>{chat.who.name} : </StyledText>
+            </StyledView>
+            <StyledText className="text-xl">{chat.content}</StyledText>
+          </StyledView>
+        )}
+      </>
     );
   };
 
@@ -55,8 +59,12 @@ export default function ChatScreen({ route, navigation }: NativeStackScreenProps
   };
 
   return (
-    <StyledSafeAreaView className="flex-1">
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10}>
+    <StyledSafeAreaView className="flex-1" style={{ paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }}>
+      <KeyboardAvoidingView
+        style={{ flex: 1, marginTop: 5 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={10}
+      >
         {/* header */}
         <StyledView className="justify-center relative flex-row items-center">
           <StyledPressable
@@ -67,7 +75,7 @@ export default function ChatScreen({ route, navigation }: NativeStackScreenProps
           >
             <StyledText>Back</StyledText>
           </StyledPressable>
-          <StyledText className="text-2xl">Chat with {friend.name}</StyledText>
+          <StyledText className="text-2xl">Chat with {route.params.friend.name}</StyledText>
         </StyledView>
         {/* body */}
         <StyledView className="flex-1 p-3">

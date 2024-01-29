@@ -25,5 +25,3 @@ export type Chat = {
 export type Chats = {
   [id: string]: Chat;
 };
-
-new Date().getTime();

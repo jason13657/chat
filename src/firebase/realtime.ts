@@ -1,6 +1,6 @@
 import { onValue, ref, set } from "firebase/database";
 import { RealTimeDb } from "./firebase";
-import { Chat, UserData } from "../types";
+import { Chat, Chats, UserData } from "../types";
 
 export function addChat(chatId: string, chat: Chat) {
   set(ref(RealTimeDb, "chat/" + chatId + "/" + chat.id), chat);
